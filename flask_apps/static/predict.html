@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Prediction App</title>
+    <style>
+        * {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <input id="image-selector" type="file"/>
+    <button id="predict-button">Predict</button>
+    <p style="font-weight:bold"></p>
+    <p>Classes: <span id="class-prediction"></span></p>
+    <img id="selected-image" src =""/>
+    <img id="recieved-image" src =""/>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $("#image-selector").change(function(){
+            let reader = new FileReader(); // object used to read the image
+            reader.onload = function(e) { // function describing what happens when the image is loaded
+                let dataURL = reader.result; // if the image is successfull read, we put the result in dataURL
+                $('#selected-image').attr("src", dataURL) // we change the attribute src in #selected-image but the value of dataURL
+                base64Image = dataURL.replace("data:image/png;base64",""); // removing the metadata part from the url
+                console.log(base64Image); // log the image to the consol
+            }
+            reader.readAsDataURL($("#image-selector")[0].files[0]); // load the selected image 
+            $("#class-prediction").text("");
+        }
+        );
+
+        $("#predict-button").click(function(event){ //descrive what happens when we click on the button
+            let message = {
+                image : base64Image 
+            } // prepare the message
+            console.log(message); // log the message to the console
+            $.post("http://0.0.0.0:5000/predict", JSON.stringify(message),function(response){
+                $("#recieved-image").attr("src","data:image/png;base64,"+response.prediction.rendered_image);
+
+                console.log(response);
+            }); // post the message that we recieve from the backend
+        }
+        );
+    </script>
+</body>
+</html>
