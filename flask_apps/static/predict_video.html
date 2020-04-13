@@ -9,32 +9,30 @@
     </style>
 </head>
 <body>
-    <input id="image-selector" type="file"/>
+    <input id="video-selector" type="file" accept=".mp4">
     <button id="predict-button">Predict</button>
     <p style="font-weight:bold"></p>
-    <p>Classes: <span id="class-prediction"></span></p>
-    <img id="selected-image" src =""/>
+    <video id="selected-video" src ="" controls width="500" style="center" type="video/mp4">
     <img id="recieved-image" src =""/>
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-        $("#image-selector").change(function(){
+        $("#video-selector").change(function(){
             let reader = new FileReader(); // object used to read the image
             reader.onload = function(e) { // function describing what happens when the image is loaded
-                let dataURL = reader.result; // if the image is successfull read, we put the result in dataURL
-                $('#selected-image').attr("src", dataURL) // we change the attribute src in #selected-image but the value of dataURL
-                base64Image = dataURL.replace("data:image/png;base64",""); // removing the metadata part from the url
-                console.log(base64Image); // log the image to the consol
+                let dataURL = e.target.result; // if the image is successfull read, we put the result in dataURL
+                $('#selected-video').attr("src", dataURL) // we change the attribute src in #selected-image but the value of dataURL
+                base64Video = dataURL.replace("data:video/mp4;base64",""); // removing the metadata part from the url
+                console.log(base64Video); // log the image to the consol
             }
-            reader.readAsDataURL($("#image-selector")[0].files[0]); // load the selected image 
-            $("#class-prediction").text("");
+            reader.readAsDataURL($("#video-selector")[0].files[0]); // load the selected image 
         }
         );
 
         $("#predict-button").click(function(event){ //descrive what happens when we click on the button
             let message = {
-                image : base64Image 
+                video : base64Video 
             } // prepare the message
             console.log(message); // log the message to the console
             $.post("http://0.0.0.0:5000/predict", JSON.stringify(message),function(response){

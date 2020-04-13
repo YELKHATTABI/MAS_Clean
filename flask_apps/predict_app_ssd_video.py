@@ -90,10 +90,10 @@ def create_opencv_image_from_stringio(img_stream, cv2_img_flag=1):
     img_stream.seek(0)
     img_array = np.asarray(bytearray(img_stream.read()), dtype=np.uint8)
     print(img_array.shape)
-    decoded_image = cv2.imdecode(img_array, cv2_img_flag)
-    print(decoded_image.shape)
+    decoded_video = cv2.imdecode(img_array, cv2_img_flag)
+    print(decoded_video.shape)
 
-    return decoded_image
+    return decoded_video
 
 def render_image(original_image,y_pred_thresh,colors_rgb,classes,prediction_img_size = (300,300)):
     rendred_image = deepcopy(original_image)
@@ -187,9 +187,11 @@ get_model(weights_path)
 @app.route("/predict", methods=["POST"])
 def predict():
     message = request.get_json(force=True)
-    encoded_image = message["image"]
-    decoded_image = base64.b64decode(encoded_image)
-    image = create_opencv_image_from_stringio(io.BytesIO(decoded_image))
+    encoded_video = message["image"]
+    decoded_video = base64.b64decode(encoded_video)
+    print(decoded_video)
+    cap = cv2.VideoCapture(decoded_video)
+    image = create_opencv_image_from_stringio(io.BytesIO(decoded_video))
     processed_image = preprocess_image(image)
     y_pred = model.predict(processed_image)
     confidence_threshold = 0.8
