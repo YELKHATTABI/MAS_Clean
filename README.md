@@ -82,4 +82,5 @@ The webpage will enable you to load your beloved image and get model predictions
 Run the script `./flask_apps/predict_app_ssd.py` then oppen the link http://0.0.0.0:5001/static/predict_object_detection.html
 The webpage will enable you to load your beloved image and get model predictions
 
-
+references : 
+https://github.com/pierluigiferrari/ssd_keras
