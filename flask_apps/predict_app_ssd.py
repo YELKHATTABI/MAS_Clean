@@ -190,7 +190,6 @@ def predict():
     y_pred = model.predict(processed_image)
     confidence_threshold = 0.8
     y_pred_thresh = [y_pred[k][y_pred[k,:,1] > confidence_threshold] for k in range(y_pred.shape[0])]
-    np.set_printoptions(precision=2, suppress=True, linewidth=90)
     rendered_image = render_image(image,y_pred_thresh,colors_rgb,classes)
     _,encoded_rendered_image = cv2.imencode('.jpg', rendered_image)
     ENCODING = 'utf-8'
