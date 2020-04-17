@@ -75,7 +75,7 @@ def get_model(w_path):
     ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
 
     model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
-    print(model.summary())
+    print("model is Loaded ! ")
     
 
 
@@ -89,9 +89,7 @@ def preprocess_image(image, target_size=(300,300)):
 def create_opencv_image_from_stringio(img_stream, cv2_img_flag=1):
     img_stream.seek(0)
     img_array = np.asarray(bytearray(img_stream.read()), dtype=np.uint8)
-    print(img_array.shape)
     decoded_image = cv2.imdecode(img_array, cv2_img_flag)
-    print(decoded_image.shape)
 
     return decoded_image
 
@@ -107,10 +105,6 @@ def render_image(original_image,y_pred_thresh,colors_rgb,classes,prediction_img_
         pt1 = (xmin,ymin)
         pt2 = (xmax,ymax)
         color = colors_rgb[int(box[0])]
-        print(rendred_image.shape)
-        print(color)
-        print(pt1)
-        print(pt2)
         rendred_image = cv2.rectangle(
             img=rendred_image,
             pt1=(xmin,ymin),
@@ -181,10 +175,12 @@ weights_path = '/Users/yelkhattabi/MAS_Clean/ssd_keras/model_weights/VGG_VOC0712
 
 print(" * Loading Keras model...")
 get_model(weights_path)
+print(F"""
+Use the following link to access the app : http://0.0.0.0:5001/static/predict_object_detection.html
+""")
 
 
-
-@app.route("/predict", methods=["POST"])
+@app.route("/predict_object_detection", methods=["POST"])
 def predict():
     message = request.get_json(force=True)
     encoded_image = message["image"]
@@ -195,9 +191,6 @@ def predict():
     confidence_threshold = 0.8
     y_pred_thresh = [y_pred[k][y_pred[k,:,1] > confidence_threshold] for k in range(y_pred.shape[0])]
     np.set_printoptions(precision=2, suppress=True, linewidth=90)
-    print("Predicted boxes:\n")
-    print('   class   conf xmin   ymin   xmax   ymax')
-    print(y_pred_thresh[0])
     rendered_image = render_image(image,y_pred_thresh,colors_rgb,classes)
     _,encoded_rendered_image = cv2.imencode('.jpg', rendered_image)
     ENCODING = 'utf-8'
@@ -209,5 +202,5 @@ def predict():
 
 if __name__ == "__main__":
     # Serve the app with gevent
-    http_server = WSGIServer(("0.0.0.0", 5000), app)
+    http_server = WSGIServer(("0.0.0.0", 5001), app)
     http_server.serve_forever()

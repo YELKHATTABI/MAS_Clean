@@ -2,30 +2,21 @@
 <html>
 <head>
     <title>Image Prediction App</title>
-    <link rel="stylesheet" ref="https://cdnjs.cloudflare.com/ajax/libs/dc/3.0.4/cd.css">
     <style>
         * {
-            font-size: 30px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <input id="image-selector" type="file"/>
     <button id="predict-button">Predict</button>
-    <div>
-        <div id="row-chart"></div>
-        <div id="pie-chart"></div>
-    </div>
     <p style="font-weight:bold"></p>
     <p>Dog: <span id="dog-prediction"></span></p>
     <p>Cat: <span id="cat-prediction"></span></p>
-    <img id="selected-image" style="clear:both;display:block" src =""/>
+    <img id="selected-image" src =""/>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cd/"></script>
-    
     <script>
         $("#image-selector").change(function(){
             let reader = new FileReader(); // object used to read the image
@@ -46,9 +37,9 @@
                 image : base64Image 
             } // prepare the message
             console.log(message); // log the message to the console
-            $.post("http://0.0.0.0:5000/predict", JSON.stringify(message),function(response){
-                $("#dog-prediction").text(response.prediction.dog.toFixed(6));
-                $("#cat-prediction").text(response.prediction.cat.toFixed(6));
+            $.post("http://0.0.0.0:5000/predict_classification", JSON.stringify(message),function(response){
+                $("#dog-prediction").text((100*response.prediction.dog).toFixed(2).toString().concat(" %"));
+                $("#cat-prediction").text((100*response.prediction.cat).toFixed(2).toString().concat(" %"));
                 console.log(response);
             }); // post the message that we recieve from the backend
         }

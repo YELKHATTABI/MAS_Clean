@@ -35,7 +35,7 @@
                 image : base64Image 
             } // prepare the message
             console.log(message); // log the message to the console
-            $.post("http://0.0.0.0:5000/predict", JSON.stringify(message),function(response){
+            $.post("http://0.0.0.0:5001/predict_object_detection", JSON.stringify(message),function(response){
                 $("#selected-image").attr("src","data:image/jpg;base64,".concat(response.prediction.rendered_image));
 
                 console.log(response);
